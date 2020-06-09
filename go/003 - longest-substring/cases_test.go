@@ -5,6 +5,14 @@ var tests = []struct {
 	expected int
 }{
 	{
+		input:    "aaaaaa",
+		expected: 1,
+	},
+	{
+		input:    "abcabcbb",
+		expected: 3,
+	},
+	{
 		input:    "abcabcdabcdea",
 		expected: 5,
 	},
@@ -19,5 +27,9 @@ var tests = []struct {
 	{
 		input:    " ",
 		expected: 1,
+	},
+	{
+		input:    "abc",
+		expected: 3,
 	},
 }
