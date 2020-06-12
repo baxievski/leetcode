@@ -32,4 +32,12 @@ var tests = []struct {
 		input:    "{[()]}",
 		expected: true,
 	},
+	{
+		input:    "]",
+		expected: false,
+	},
+	{
+		input:    "()]",
+		expected: false,
+	},
 }

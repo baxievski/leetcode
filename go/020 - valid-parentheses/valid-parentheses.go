@@ -1,28 +1,30 @@
 package validparentheses
 
-import "fmt"
-
 func isValid(input string) bool {
 	matchingBrackets := map[rune]rune{
 		')': '(',
 		']': '[',
-		'}': '}',
+		'}': '{',
 	}
 	inR := []rune(input)
 	parentheses := []rune{}
-	for i, curParen := range inR {
-		fmt.Println(i, string(curParen), string(parentheses))
+
+	for _, curParen := range inR {
 		if openParen, ok := matchingBrackets[curParen]; ok {
+			if len(parentheses) == 0 {
+				return false
+			}
+
 			if parentheses[len(parentheses)-1] != openParen {
 				return false
 			}
+
 			parentheses = parentheses[:len(parentheses)-1]
+			continue
 		}
+
 		parentheses = append(parentheses, curParen)
 	}
 
-	if len(parentheses) == 0 {
-		return false
-	}
-	return true
+	return len(parentheses) == 0
 }
