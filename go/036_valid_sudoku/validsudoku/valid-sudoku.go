@@ -89,3 +89,12 @@ func (s Sudoku) validRows() bool {
 	}
 	return true
 }
+
+func (s Sudoku) String() string {
+	o := "\n"
+	for _, r := range s.Board {
+		o += string(r)
+	}
+	o += "\n"
+	return o
+}
