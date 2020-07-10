@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"./validsudoku"
+	"gitea.bojanaxievski.duckdns.org/baxievski/leetcode/go/036_valid_sudoku/validsudoku"
 )
 
 func main() {
