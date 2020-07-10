@@ -1,7 +1,7 @@
-module gitea.bojanaxievski.duckdns.org/baxievski/leetcode/go/036 - valid-sudoku
+module gitea.bojanaxievski.duckdns.org/baxievski/leetcode/go/036_valid_sudoku
 
 require (
-    gitea.bojanaxievski.duckdns.org/baxievski/leetcode/go/036 - valid-sudoku/validsudoku
+    gitea.bojanaxievski.duckdns.org/baxievski/leetcode/go/036_valid_sudoku/validsudoku
 )
 
 go 1.14
