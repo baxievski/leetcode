@@ -19,5 +19,5 @@ func main() {
 		{0, 0, 0, 0, 8, 0, 0, 7, 9},
 	}}
 	fmt.Println(s.IsValidSudoku())
-	fmt.Println(s)
+	fmt.Println(s.String())
 }
