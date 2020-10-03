@@ -1,11 +1,9 @@
 package validsudoku
 
 func isValidSudoku(board [][]byte) bool {
-	x := len(board[0])
-	y := len(board)
-	iB := make([][]int, x)
+	iB := make([][]int, len(board[0]))
 	for i, row := range board {
-		iB[i] = make([]int, y)
+		iB[i] = make([]int, len(board))
 		for j, el := range row {
 			if el == '.' {
 				el = '0'
@@ -37,11 +35,9 @@ func (s Sudoku) IsValidSudoku() bool {
 }
 
 func (s Sudoku) validColumns() bool {
-	x := len(s.Board[0])
-	y := len(s.Board)
-	res := make([][]int, x)
+	res := make([][]int, len(s.Board[0]))
 	for i := range res {
-		res[i] = make([]int, y)
+		res[i] = make([]int, len(s.Board))
 	}
 
 	for i, r := range s.Board {
@@ -53,11 +49,9 @@ func (s Sudoku) validColumns() bool {
 }
 
 func (s Sudoku) validSubBoards() bool {
-	x := len(s.Board[0])
-	y := len(s.Board)
-	res := make([][]int, x)
+	res := make([][]int, len(s.Board[0]))
 	for i := range res {
-		res[i] = make([]int, y)
+		res[i] = make([]int, len(s.Board))
 	}
 
 	for i, r := range s.Board {
