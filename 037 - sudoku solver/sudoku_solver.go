@@ -39,7 +39,7 @@ func (s *Sudoku) Solve() bool {
 	for row := range *s {
 		for col := range (*s)[row] {
 			if (*s)[row][col] == 0 {
-				for v := 1; v <= 9; v++ {
+				for _, v := range s.posibilities(row, col) {
 					(*s)[row][col] = v
 					if s.IsValidSudoku() {
 						if s.Solve() {
@@ -86,53 +86,127 @@ func (s *Sudoku) IsValidSudoku() bool {
 }
 
 func (s *Sudoku) validColumns() bool {
-	res := make(Sudoku, len((*s)[0]))
-	for i := range res {
-		res[i] = make([]int, len(*s))
-	}
-
-	for i, r := range *s {
-		for j, e := range r {
-			res[j][i] = e
-		}
-	}
-	return res.validRows()
-}
-
-func (s *Sudoku) validSubBoards() bool {
-	res := make(Sudoku, len((*s)[0]))
-	for i := range res {
-		res[i] = make([]int, len(*s))
-	}
-
-	for i, r := range *s {
-		for j := range r {
-			res[i][j] = (*s)[3*(i/3)+(j/3)][3*(i%3)+(j%3)]
-		}
-	}
-	return res.validRows()
-}
-
-func (s *Sudoku) validRows() bool {
-	for _, row := range *s {
-		seen := map[int]bool{}
-		for _, n := range row {
-			if n == 0 {
+	for i := range *s {
+		seenInColumn := map[int]bool{}
+		for j := range (*s)[i] {
+			elInColumn := (*s)[j][i]
+			if elInColumn == 0 {
 				continue
 			}
-			if n < 0 {
+			if elInColumn < 0 {
 				return false
 			}
-			if n > 9 {
+			if elInColumn > 9 {
 				return false
 			}
-			if seen[n] {
+			if seenInColumn[elInColumn] {
 				return false
 			}
-			seen[n] = true
+			seenInColumn[elInColumn] = true
 		}
 	}
 	return true
+}
+
+func (s *Sudoku) validRows() bool {
+	for i := range *s {
+		seen := map[int]bool{}
+		for j := range (*s)[i] {
+			el := (*s)[i][j]
+			if el == 0 {
+				continue
+			}
+			if el < 0 {
+				return false
+			}
+			if el > 9 {
+				return false
+			}
+			if seen[el] {
+				return false
+			}
+			seen[el] = true
+		}
+	}
+	return true
+}
+
+func (s *Sudoku) validSubBoards() bool {
+	for i := range *s {
+		seen := map[int]bool{}
+		for j := range (*s)[i] {
+			el := (*s)[3*(i/3)+(j/3)][3*(i%3)+(j%3)]
+			if el == 0 {
+				continue
+			}
+			if el < 0 {
+				return false
+			}
+			if el > 9 {
+				return false
+			}
+			if seen[el] {
+				return false
+			}
+			seen[el] = true
+		}
+	}
+	return true
+}
+func (s *Sudoku) posibilities(i int, j int) []int {
+	seen := map[int]bool{
+		1: false,
+		2: false,
+		3: false,
+		4: false,
+		5: false,
+		6: false,
+		7: false,
+		8: false,
+		9: false,
+	}
+	for k := range *s {
+		// remove used in row
+		seen[(*s)[i][k]] = true
+		// remove used in column
+		seen[(*s)[k][j]] = true
+		// remove used in subboard
+		seen[(*s)[3*(i/3)+(k/3)][(k%3)+3*(j/3)]] = true
+	}
+	p := []int{}
+	for k, v := range seen {
+		if !v {
+			p = append(p, k)
+		}
+	}
+	return p
+}
+
+// Row gives all the elements for the ith row
+func (s *Sudoku) Row(i int, _ int) []int {
+	r := make([]int, len(*s))
+	for k := range *s {
+		r[k] = (*s)[i][k]
+	}
+	return r
+}
+
+// Column gives all the elements for the jth column
+func (s *Sudoku) Column(_ int, j int) []int {
+	r := make([]int, len(*s))
+	for k := range *s {
+		r[k] = (*s)[k][j]
+	}
+	return r
+}
+
+// SubBoard gives all the elements for the subboard in which i, j is located
+func (s *Sudoku) SubBoard(i int, j int) []int {
+	r := make([]int, len(*s))
+	for k := range *s {
+		r[k] = (*s)[3*(i/3)+(k/3)][(k%3)+3*(j/3)]
+	}
+	return r
 }
 
 func (s *Sudoku) String() string {
