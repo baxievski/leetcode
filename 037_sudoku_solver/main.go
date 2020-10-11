@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"gitea.bojanaxievski.duckdns.org/baxievski/leetcode/go/037_sudoku_solver/sudokusolver"
+	"gitea.bojanaxievski.duckdns.org/baxievski/leetcode/037_sudoku_solver/sudokusolver"
 )
 
 func main() {
