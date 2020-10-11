@@ -2,6 +2,7 @@ package sudokusolver
 
 import (
 	"fmt"
+	"strings"
 )
 
 func solveSudoku(board [][]byte) {
@@ -36,16 +37,16 @@ func (s *Sudoku) Solve() bool {
 	if s.IsSolved() {
 		return true
 	}
+	if !s.IsValid() {
+		return false
+	}
 	for row := range *s {
 		for col := range (*s)[row] {
 			if (*s)[row][col] == 0 {
-				for _, v := range s.posibilities(row, col) {
+				for _, v := range s.moves(row, col) {
 					(*s)[row][col] = v
-					if s.IsValidSudoku() {
-						if s.Solve() {
-							return true
-						}
-						(*s)[row][col] = 0
+					if s.Solve() {
+						return true
 					}
 					(*s)[row][col] = 0
 				}
@@ -71,8 +72,8 @@ func (s *Sudoku) IsSolved() bool {
 
 }
 
-// IsValidSudoku tells if the structure is a valid sudoku board
-func (s *Sudoku) IsValidSudoku() bool {
+// IsValid tells if the structure is a valid sudoku board
+func (s *Sudoku) IsValid() bool {
 	if !s.validRows() {
 		return false
 	}
@@ -87,22 +88,22 @@ func (s *Sudoku) IsValidSudoku() bool {
 
 func (s *Sudoku) validColumns() bool {
 	for i := range *s {
-		seenInColumn := map[int]bool{}
+		seen := map[int]bool{}
 		for j := range (*s)[i] {
-			elInColumn := (*s)[j][i]
-			if elInColumn == 0 {
+			el := (*s)[j][i]
+			if el == 0 {
 				continue
 			}
-			if elInColumn < 0 {
+			if el < 0 {
 				return false
 			}
-			if elInColumn > 9 {
+			if el > 9 {
 				return false
 			}
-			if seenInColumn[elInColumn] {
+			if seen[el] {
 				return false
 			}
-			seenInColumn[elInColumn] = true
+			seen[el] = true
 		}
 	}
 	return true
@@ -153,7 +154,7 @@ func (s *Sudoku) validSubBoards() bool {
 	}
 	return true
 }
-func (s *Sudoku) posibilities(i int, j int) []int {
+func (s *Sudoku) moves(i int, j int) []int {
 	seen := map[int]bool{
 		1: false,
 		2: false,
@@ -166,11 +167,11 @@ func (s *Sudoku) posibilities(i int, j int) []int {
 		9: false,
 	}
 	for k := range *s {
-		// remove used in row
+		// seen in row
 		seen[(*s)[i][k]] = true
-		// remove used in column
+		// seen in column
 		seen[(*s)[k][j]] = true
-		// remove used in subboard
+		// seen in subboard
 		seen[(*s)[3*(i/3)+(k/3)][(k%3)+3*(j/3)]] = true
 	}
 	p := []int{}
@@ -182,44 +183,23 @@ func (s *Sudoku) posibilities(i int, j int) []int {
 	return p
 }
 
-// Row gives all the elements for the ith row
-func (s *Sudoku) Row(i int, _ int) []int {
-	r := make([]int, len(*s))
-	for k := range *s {
-		r[k] = (*s)[i][k]
-	}
-	return r
-}
-
-// Column gives all the elements for the jth column
-func (s *Sudoku) Column(_ int, j int) []int {
-	r := make([]int, len(*s))
-	for k := range *s {
-		r[k] = (*s)[k][j]
-	}
-	return r
-}
-
-// SubBoard gives all the elements for the subboard in which i, j is located
-func (s *Sudoku) SubBoard(i int, j int) []int {
-	r := make([]int, len(*s))
-	for k := range *s {
-		r[k] = (*s)[3*(i/3)+(k/3)][(k%3)+3*(j/3)]
-	}
-	return r
-}
-
 func (s *Sudoku) String() string {
-	o := "\n"
-	for _, r := range *s {
-		for _, e := range r {
-			o += fmt.Sprint(e)
-			o += " "
+	sb := strings.Builder{}
+	sb.WriteString("\n")
+	for row, r := range *s {
+		if row%3 == 0 {
+			sb.WriteString("+------+------+------+\n")
 		}
-		o += "\n"
+		for col, e := range r {
+			if col%3 == 0 {
+				sb.WriteString("|")
+			}
+			sb.WriteString(fmt.Sprintf("%v ", e))
+		}
+		sb.WriteString("|\n")
 	}
-	o += "\n"
-	return o
+	sb.WriteString("+------+------+------+\n")
+	return sb.String()
 }
 
 // Equal tells if 2 sudoku boards are the same
